@@ -1,192 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>W Carz</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f4f4;
-      color: #333;
-    }
-    header {
-      background: #222;
-      color: white;
-      padding: 1em;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1em;
-      margin: 1em 0;
-    }
-    nav input, nav button {
-      padding: 0.5em 1em;
-      font-size: 1em;
-      border-radius: 5px;
-      border: none;
-    }
-    nav input {
-      flex: 1;
-      min-width: 200px;
-    }
-    .container {
-      width: 95%;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1em;
-    }
-    .card {
-      background: white;
-      padding: 1em;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    .card h3 {
-      margin: 0.5em 0;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: white;
-      padding: 2em;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 600px;
-      position: relative;
-    }
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 1.5em;
-    }
-    .quiz {
-      padding: 2em;
-      background: #fff;
-      margin: 1em auto;
-      max-width: 600px;
-      border-radius: 10px;
-    }
-    .quiz label {
-      display: block;
-      margin: 1em 0 0.5em;
-    }
-    .quiz select {
-      width: 100%;
-      padding: 0.5em;
-    }
-    #suggestResult {
-      margin-top: 1em;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W Carz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .brand {
+            margin-bottom: 30px;
+        }
+        .brand h2 {
+            border-bottom: 2px solid #222;
+            padding-bottom: 10px;
+        }
+        .cars {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .car {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .car img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #222;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-  <header>
+
+<header>
     <h1>W Carz</h1>
-    <p>Explore top car brands and models</p>
-  </header>
+</header>
 
-  <nav>
-    <button id="allBtn">All Cars</button>
-    <button id="quizBtn">Car Suggestion Quiz</button>
-    <input type="text" id="searchInput" placeholder="Search by name or brand" />
-    <button id="searchBtn">Search</button>
-  </nav>
-
-  <div id="main" class="container"></div>
-
-  <div id="quizDiv" class="quiz" style="display:none;">
-    <h2>Find Your Car</h2>
-    <label for="speed">Preferred Speed:</label>
-    <select id="speed">
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="classic">Classic Fast</option>
-    </select>
-    <label for="brand">Brand Preference:</label>
-    <select id="brand">
-      <option value="any">Any</option>
-      <option value="BMW M">BMW M</option>
-      <option value="Bugatti">Bugatti</option>
-      <option value="Ferrari">Ferrari</option>
-      <option value="Lamborghini">Lamborghini</option>
-    </select>
-    <label for="power">Horsepower Preference:</label>
-    <select id="power">
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="low">Low</option>
-    </select>
-    <button id="suggestBtn">Suggest Car</button>
-    <div id="suggestResult"></div>
-  </div>
-
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <div id="modalBody"></div>
+<div class="container">
+    <div class="brand">
+        <h2>Ferrari</h2>
+        <div class="cars">
+            <div class="car">
+                <img src="https://example.com/ferrari1.jpg" alt="Ferrari 488">
+                <h3>Ferrari 488</h3>
+            </div>
+            <div class="car">
+                <img src="https://example.com/ferrari2.jpg" alt="Ferrari F8">
+                <h3>Ferrari F8</h3>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const cars = [
-      {brand:'BMW M', model:'M3 Modern', type:'modern', speed:'high', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M3+Modern'},
-      {brand:'BMW M', model:'M1 Classic', type:'classic', speed:'classic', hp:273, img:'https://via.placeholder.com/250x150?text=BMW+M1+Classic'},
-      {brand:'BMW M', model:'M4 Modern', type:'modern', speed:'high', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M4+Modern'},
-      {brand:'BMW M', model:'M2 Classic', type:'classic', speed:'classic', hp:270, img:'https://via.placeholder.com/250x150?text=BMW+M2+Classic'},
-      {brand:'Bugatti', model:'Chiron Modern', type:'modern', speed:'high', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Chiron'},
-      {brand:'Bugatti', model:'Veyron Classic', type:'classic', speed:'classic', hp:1001, img:'https://via.placeholder.com/250x150?text=Bugatti+Veyron'},
-      {brand:'Bugatti', model:'Divo Modern', type:'modern', speed:'high', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Divo'},
-      {brand:'Bugatti', model:'EB110 Classic', type:'classic', speed:'classic', hp:553, img:'https://via.placeholder.com/250x150?text=Bugatti+EB110'},
-      {brand:'Ferrari', model:'F8 Modern', type:'modern', speed:'high', hp:710, img:'https://via.placeholder.com/250x150?text=Ferrari+F8'},
-      {brand:'Ferrari', model:'250 GTO Classic', type:'classic', speed:'classic', hp:300, img:'https://via.placeholder.com/250x150?text=Ferrari+250+GTO'},
-      {brand:'Ferrari', model:'SF90 Modern', type:'modern', speed:'high', hp:986, img:'https://via.placeholder.com/250x150?text=Ferrari+SF90'},
-      {brand:'Ferrari', model:'Testarossa Classic', type:'classic', speed:'classic', hp:390, img:'https://via.placeholder.com/250x150?text=Ferrari+Testarossa'},
-      {brand:'Lamborghini', model:'Huracan Modern', type:'modern', speed:'high', hp:631, img:'https://via.placeholder.com/250x150?text=Lamborghini+Huracan'},
-      {brand:'Lamborghini', model:'Countach Classic', type:'classic', speed:'classic', hp:455, img:'https://via.placeholder.com/250x150?text=Lamborghini+Countach'},
-      {brand:'Lamborghini', model:'Aventador Modern', type:'modern', speed:'high', hp:769, img:'https://via.placeholder.com/250x150?text=Lamborghini+Aventador'},
-      {brand:'Lamborghini', model:'Miura Classic', type:'classic', speed:'classic', hp:350, img:'https://via.placeholder.com/250x150?text=Lamborghini+Miura'}
-    ];
+    <div class="brand">
+        <h2>Lamborghini</h2>
+        <div class="cars">
+            <div class="car">
+                <img src="https://example.com/lamborghini1.jpg" alt="Lamborghini Huracan">
+                <h3>Lamborghini Huracan</h3>
+            </div>
+            <div class="car">
+                <img src="https://example.com/lamborghini2.jpg" alt="Lamborghini Aventador">
+                <h3>Lamborghini Aventador</h3>
+            </div>
+        </div>
+    </div>
 
-    function displayCars(list){
-      const main = document.getElementById('main');
-      main.innerHTML = '';
-      list.forEach((car, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${car.img}" alt="${car.model}" />
-          <h3>${car.brand} ${car.model}</h3>
-          <p>Horsepower: ${car.hp} HP</p>
-          <button onclick="showDetails(${index})">Details</button>
-        `;
-        main.appendChild(card);
-      });
-    }
+    <div class="brand">
+        <h2>Porsche</h2>
+        <div class="cars">
+            <div class="car">
+                <img src="https://example.com/porsche1.jpg" alt="Porsche 911">
+                <h3>Porsche 911</h3>
+            </div>
+            <div class="car">
+                <img src="https://example.com/porsche2.jpg" alt="Porsche Taycan">
+                <h3>Porsche Taycan</h3>
+            </div>
+        </div>
+    </div>
+</div>
 
-    function showDetails(index){
-      const car = cars[index];
-      document.getElementById('modalBody').innerHTML = `
-        <h2>${car.brand} ${car.model}</h2>
-        <img src="${car.img}" style="width:100%" />
-        <p>Type: ${car
+<footer>
+    &copy; 2025 W Carz
+</footer>
+
+</body>
+</html>
