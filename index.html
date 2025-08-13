@@ -1,113 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>W Carz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #222;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-        }
-        .brand {
-            margin-bottom: 30px;
-        }
-        .brand h2 {
-            border-bottom: 2px solid #222;
-            padding-bottom: 10px;
-        }
-        .cars {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .car {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            width: 200px;
-            text-align: center;
-            padding: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .car img {
-            width: 100%;
-            border-radius: 5px;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #222;
-            color: #fff;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>W Carz</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #333; }
+    header { background: #222; color: white; padding: 1em; text-align: center; }
+    .search-bar, .filters, .brands { padding: 1em; max-width: 1000px; margin: auto; }
+    .search-bar input { width: 70%; padding: 0.5em; font-size: 1em; }
+    .search-bar button { padding: 0.5em 1em; margin-left: 0.5em; }
+    .filters select, .filters button { margin: 0.5em 0; padding: 0.5em; width: 100%; }
+    .brand-card { background: white; padding: 1em; margin: 1em 0; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .brand-card h3 { margin: 0; }
+    .brand-card p { margin: 0.5em 0 0; font-size: 0.9em; color: #555; }
+  </style>
 </head>
 <body>
-
-<header>
+  <header>
     <h1>W Carz</h1>
-</header>
+    <p>Explore the world's most iconic cars</p>
+  </header>
 
-<div class="container">
-    <div class="brand">
-        <h2>Ferrari</h2>
-        <div class="cars">
-            <div class="car">
-                <img src="https://example.com/ferrari1.jpg" alt="Ferrari 488">
-                <h3>Ferrari 488</h3>
-            </div>
-            <div class="car">
-                <img src="https://example.com/ferrari2.jpg" alt="Ferrari F8">
-                <h3>Ferrari F8</h3>
-            </div>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by brand or model" />
+    <button onclick="searchCars()">Search</button>
+    <button onclick="showTopBrands()">Top Brands & Models</button>
+    <button onclick="filterByBrand('Rimac')">Rimac</button>
+  </div>
+
+  <div class="filters">
+    <h2>Filter Cars</h2>
+    <select id="typeFilter">
+      <option value="">Car Type</option>
+      <option value="EV">EV</option>
+      <option value="Hypercar">Hypercar</option>
+      <option value="Sports">Sports</option>
+    </select>
+    <select id="bodyFilter">
+      <option value="">Body Type</option>
+      <option value="Coupe">Coupe</option>
+      <option value="Sedan">Sedan</option>
+    </select>
+    <select id="priceFilter">
+      <option value="">Max Price</option>
+      <option value="100000">100K</option>
+      <option value="500000">500K</option>
+      <option value="1000000">1M+</option>
+    </select>
+    <button onclick="applyFilters()">Apply Filters</button>
+  </div>
+
+  <div class="brands" id="brandList">
+    <!-- Brand cards will be injected here -->
+  </div>
+
+  <script>
+    const brands = [
+      { name: "Ferrari", country: "Italy", year: 1939, tagline: "Racing soul" },
+      { name: "Lamborghini", country: "Italy", year: 1963, tagline: "Bold design" },
+      { name: "Porsche", country: "Germany", year: 1931, tagline: "Precision engineering" },
+      { name: "McLaren", country: "UK", year: 1963, tagline: "Track-bred speed" },
+      { name: "Bugatti", country: "France", year: 1909, tagline: "Luxury performance" },
+      { name: "Tesla", country: "USA", year: 2003, tagline: "Electric innovation" },
+      { name: "Rimac", country: "Croatia", year: 2009, tagline: "EV hypercar" },
+      { name: "Mercedes-AMG", country: "Germany", year: 1967, tagline: "German muscle" }
+    ];
+
+    function showTopBrands() {
+      const list = document.getElementById('brandList');
+      list.innerHTML = '';
+      brands.forEach(brand => {
+        const card = document.createElement('div');
+        card.className = 'brand-card';
+        card.innerHTML = `
+          <h3>${brand.name}</h3>
+          <p>Founded: ${brand.year} (${brand.country})</p>
+          <p><em>${brand.tagline}</em></p>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function filterByBrand(name) {
+      const brand = brands.find(b => b.name === name);
+      const list = document.getElementById('brandList');
+      list.innerHTML = brand ? `
+        <div class="brand-card">
+          <h3>${brand.name}</h3>
+          <p>Founded: ${brand.year} (${brand.country})</p>
+          <p><em>${brand.tagline}</em></p>
         </div>
-    </div>
+      ` : '<p>No brand found.</p>';
+    }
 
-    <div class="brand">
-        <h2>Lamborghini</h2>
-        <div class="cars">
-            <div class="car">
-                <img src="https://example.com/lamborghini1.jpg" alt="Lamborghini Huracan">
-                <h3>Lamborghini Huracan</h3>
-            </div>
-            <div class="car">
-                <img src="https://example.com/lamborghini2.jpg" alt="Lamborghini Aventador">
-                <h3>Lamborghini Aventador</h3>
-            </div>
-        </div>
-    </div>
+    function searchCars() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const results = brands.filter(b =>
+        b.name.toLowerCase().includes(query) ||
+        b.tagline.toLowerCase().includes(query)
+      );
+      const list = document.getElementById('brandList');
+      list.innerHTML = '';
+      results.forEach(brand => {
+        const card = document.createElement('div');
+        card.className = 'brand-card';
+        card.innerHTML = `
+          <h3>${brand.name}</h3>
+          <p>Founded: ${brand.year} (${brand.country})</p>
+          <p><em>${brand.tagline}</em></p>
+        `;
+        list.appendChild(card);
+      });
+    }
 
-    <div class="brand">
-        <h2>Porsche</h2>
-        <div class="cars">
-            <div class="car">
-                <img src="https://example.com/porsche1.jpg" alt="Porsche 911">
-                <h3>Porsche 911</h3>
-            </div>
-            <div class="car">
-                <img src="https://example.com/porsche2.jpg" alt="Porsche Taycan">
-                <h3>Porsche Taycan</h3>
-            </div>
-        </div>
-    </div>
-</div>
+    function applyFilters() {
+      // Placeholder for filter logic
+      alert("Filter logic can be added here based on car data.");
+    }
 
-<footer>
-    &copy; 2025 W Carz
-</footer>
-
+    // Load top brands on page load
+    showTopBrands();
+  </script>
 </body>
 </html>
