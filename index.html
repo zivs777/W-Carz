@@ -13,18 +13,18 @@
     }
     header {
       background-color: #1f1f1f;
-      padding: 1.5em;
+      padding: 2em;
       text-align: center;
       border-bottom: 2px solid #333;
     }
     header h1 {
       margin: 0;
-      font-size: 2em;
+      font-size: 2.5em;
       color: #ff3c00;
     }
     header p {
       margin-top: 0.5em;
-      font-size: 1em;
+      font-size: 1.2em;
       color: #aaa;
     }
     .search-bar {
@@ -91,6 +91,42 @@
       font-size: 0.9em;
       color: #ccc;
     }
+    .quiz-section {
+      max-width: 800px;
+      margin: 2em auto;
+      background-color: #1e1e1e;
+      padding: 2em;
+      border-radius: 10px;
+    }
+    .quiz-section h2 {
+      color: #ff3c00;
+    }
+    .quiz-section label {
+      display: block;
+      margin: 1em 0 0.5em;
+    }
+    .quiz-section select {
+      width: 100%;
+      padding: 0.5em;
+      background-color: #2a2a2a;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    .quiz-section button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      background-color: #ff3c00;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    #quizResult {
+      margin-top: 1em;
+      font-weight: bold;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -107,47 +143,71 @@
 
   <div id="carDisplay"></div>
 
+  <div class="quiz-section">
+    <h2>Find Your Perfect Car</h2>
+    <label>Preferred Speed:</label>
+    <select id="q1">
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="classic">Classic</option>
+    </select>
+    <label>Preferred Style:</label>
+    <select id="q2">
+      <option value="sleek">Sleek</option>
+      <option value="aggressive">Aggressive</option>
+      <option value="retro">Retro</option>
+    </select>
+    <label>Budget:</label>
+    <select id="q3">
+      <option value="low">Under $100K</option>
+      <option value="medium">$100K–$500K</option>
+      <option value="high">Over $500K</option>
+    </select>
+    <label>Country Preference:</label>
+    <select id="q4">
+      <option value="Italy">Italy</option>
+      <option value="Germany">Germany</option>
+      <option value="USA">USA</option>
+      <option value="France">France</option>
+      <option value="UK">UK</option>
+    </select>
+    <label>Tech Level:</label>
+    <select id="q5">
+      <option value="modern">Modern</option>
+      <option value="classic">Classic</option>
+    </select>
+    <button onclick="suggestCar()">Suggest Car</button>
+    <div id="quizResult"></div>
+  </div>
+
   <script>
-    const cars = [
-      // BMW M
-      {brand:'BMW M', model:'M3 Modern', type:'modern', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M3'},
-      {brand:'BMW M', model:'M4 Modern', type:'modern', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M4'},
-      {brand:'BMW M', model:'M1 Classic', type:'classic', hp:273, img:'https://via.placeholder.com/250x150?text=BMW+M1'},
-      {brand:'BMW M', model:'M2 Classic', type:'classic', hp:270, img:'https://via.placeholder.com/250x150?text=BMW+M2'},
-      // Bugatti
-      {brand:'Bugatti', model:'Chiron Modern', type:'modern', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Chiron'},
-      {brand:'Bugatti', model:'Divo Modern', type:'modern', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Divo'},
-      {brand:'Bugatti', model:'Veyron Classic', type:'classic', hp:1001, img:'https://via.placeholder.com/250x150?text=Bugatti+Veyron'},
-      {brand:'Bugatti', model:'EB110 Classic', type:'classic', hp:553, img:'https://via.placeholder.com/250x150?text=Bugatti+EB110'},
-      // Ferrari
-      {brand:'Ferrari', model:'F8 Modern', type:'modern', hp:710, img:'https://via.placeholder.com/250x150?text=Ferrari+F8'},
-      {brand:'Ferrari', model:'SF90 Modern', type:'modern', hp:986, img:'https://via.placeholder.com/250x150?text=Ferrari+SF90'},
-      {brand:'Ferrari', model:'250 GTO Classic', type:'classic', hp:300, img:'https://via.placeholder.com/250x150?text=Ferrari+250+GTO'},
-      {brand:'Ferrari', model:'Testarossa Classic', type:'classic', hp:390, img:'https://via.placeholder.com/250x150?text=Ferrari+Testarossa'},
-      // Lamborghini
-      {brand:'Lamborghini', model:'Huracan Modern', type:'modern', hp:631, img:'https://via.placeholder.com/250x150?text=Lamborghini+Huracan'},
-      {brand:'Lamborghini', model:'Aventador Modern', type:'modern', hp:769, img:'https://via.placeholder.com/250x150?text=Lamborghini+Aventador'},
-      {brand:'Lamborghini', model:'Countach Classic', type:'classic', hp:455, img:'https://via.placeholder.com/250x150?text=Lamborghini+Countach'},
-      {brand:'Lamborghini', model:'Miura Classic', type:'classic', hp:350, img:'https://via.placeholder.com/250x150?text=Lamborghini+Miura'}
+    const brands = [
+      "Ferrari", "Lamborghini", "Bugatti", "Porsche", "McLaren", "BMW M", "Mercedes-AMG", "Audi Sport",
+      "Chevrolet", "Ford", "Dodge", "Tesla", "Rimac", "Koenigsegg", "Pagani", "Aston Martin",
+      "Jaguar", "Nissan", "Toyota", "Mazda"
     ];
 
+    const cars = [];
+
+    brands.forEach(brand => {
+      cars.push(
+        {brand, model:`${brand} Modern 1`, type:'modern', hp:700, country:'Italy', style:'sleek', price:'high', img:'https://via.placeholder.com/250x150?text='+brand+'+Modern+1'},
+        {brand, model:`${brand} Modern 2`, type:'modern', hp:650, country:'Germany', style:'aggressive', price:'medium', img:'https://via.placeholder.com/250x150?text='+brand+'+Modern+2'},
+        {brand, model:`${brand} Classic 1`, type:'classic', hp:400, country:'USA', style:'retro', price:'low', img:'https://via.placeholder.com/250x150?text='+brand+'+Classic+1'},
+        {brand, model:`${brand} Classic 2`, type:'classic', hp:350, country:'France', style:'retro', price:'low', img:'https://via.placeholder.com/250x150?text='+brand+'+Classic+2'}
+      );
+    });
+
     function showAllCars() {
-      const brands = [...new Set(cars.map(car => car.brand))];
       const display = document.getElementById('carDisplay');
       display.innerHTML = '';
-
       brands.forEach(brand => {
-        const brandCars = cars.filter(car => car.brand === brand);
-        const modern = brandCars.filter(car => car.type === 'modern').slice(0, 2);
-        const classic = brandCars.filter(car => car.type === 'classic').slice(0, 2);
-        const all = [...modern, ...classic];
-
         const section = document.createElement('div');
         section.className = 'brand-section';
         section.innerHTML = `<h2 class="brand-title">${brand}</h2><div class="car-grid"></div>`;
         const grid = section.querySelector('.car-grid');
-
-        all.forEach(car => {
+        const brandCars = cars.filter(car => car.brand === brand);
+        brandCars.forEach(car => {
           const card = document.createElement('div');
           card.className = 'car-card';
           card.innerHTML = `
@@ -158,7 +218,6 @@
           `;
           grid.appendChild(card);
         });
-
         display.appendChild(section);
       });
     }
@@ -171,20 +230,4 @@
       );
       const display = document.getElementById('carDisplay');
       display.innerHTML = '';
-
-      if (results.length === 0) {
-        display.innerHTML = '<p style="text-align:center;">No cars found.</p>';
-        return;
-      }
-
-      const section = document.createElement('div');
-      section.className = 'brand-section';
-      section.innerHTML = `<h2 class="brand-title">Search Results</h2><div class="car-grid"></div>`;
-      const grid = section.querySelector('.car-grid');
-
-      results.forEach(car => {
-        const card = document.createElement('div');
-        card.className = 'car-card';
-        card.innerHTML = `
-          <img src="${car.img}" alt="${car.model}" />
-          <h3>${car.model}</h
+      if (results.length === 0)
