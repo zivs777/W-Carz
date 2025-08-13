@@ -1,557 +1,146 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>W Carz — Supercar Encyclopedia</title>
-  <meta name="description" content="W Carz: browse top car brands and flagship models with specs, images, comparisons, and more."/>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23000'/%3E%3Cpath d='M16 70 L30 30 L44 70 L58 30 L72 70 L84 30' stroke='%23fff' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
-  <style>
-    :root{
-      --bg: #0b0d10; /* dark graphite */
-      --card: #12161b;
-      --muted: #7b8794;
-      --text: #e8eef4;
-      --accent: 64,160,255; /* sky */
-      --accent2: 239,68,68;  /* red */
-      --ring: 255,255,255;
-      --glass: rgba(255,255,255,0.06);
-      --shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-    [data-theme="light"]{
-      --bg: #f6f8fa;
-      --card: #ffffff;
-      --muted: #5b6774;
-      --text: #0b1620;
-      --glass: rgba(0,0,0,0.05);
-      --shadow: 0 10px 24px rgba(0,0,0,0.08);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 0% -10%, rgba(var(--accent),.06), transparent 60%),
-                  radial-gradient(800px 500px at 100% 0%, rgba(var(--accent2),.06), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.4;
-    }
-    a{color:inherit}
-    .container{max-width:1200px; margin:0 auto; padding:24px}
-    header.nav{
-      position:sticky; top:0; z-index:30; backdrop-filter:saturate(140%) blur(8px);
-      background:linear-gradient(to bottom, rgba(0,0,0,.22), transparent);
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .nav-inner{display:flex; align-items:center; gap:14px; padding:14px 24px}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px}
-    .brand .logo{width:28px; height:28px; border-radius:8px; background:#000; display:grid; place-items:center; box-shadow:0 2px 8px rgba(0,0,0,.25)}
-    .brand .logo svg{width:22px; height:22px}
-    .pill{padding:8px 12px; border-radius:999px; background:var(--glass); border:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:8px}
-    .pill input, .pill select{background:transparent; border:none; color:var(--text); outline:none}
-    .actions{margin-left:auto; display:flex; align-items:center; gap:10px}
-    .btn{cursor:pointer; padding:10px 14px; border:1px solid rgba(255,255,255,.12); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border-radius:12px; box-shadow:var(--shadow); transition:.2s transform, .2s box-shadow}
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{border-color:rgba(var(--accent),.6); background:linear-gradient(180deg, rgba(var(--accent),.18), rgba(var(--accent),.05))}
-    .btn.ghost{background:transparent}
-
-    .hero{padding:38px 24px 12px}
-    .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:24px}
-    @media (max-width: 900px){.hero-grid{grid-template-columns:1fr}}
-    .glass{background:var(--glass); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:var(--shadow)}
-    .hero-card{position:relative; overflow:hidden}
-    .hero h1{margin:0 0 12px; font-size: clamp(28px, 6vw, 44px); letter-spacing:.3px}
-    .hero p{margin:0; color:var(--muted)}
-    .tag{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:rgba(var(--accent), .14); border:1px solid rgba(var(--accent), .35); font-size:12px; font-weight:700}
-
-    .searchbar{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
-    .searchbar input[type="search"]{flex:1; min-width:220px; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:var(--text)}
-    .filters{display:flex; gap:10px; flex-wrap:wrap}
-
-    .section{padding:22px 0}
-    .section h2{margin:0 0 10px; font-size: clamp(22px, 4vw, 28px)}
-    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:14px}
-
-    .brand-card{grid-column: span 3; min-height:140px; padding:14px; position:relative; overflow:hidden}
-    @media (max-width:1100px){.brand-card{grid-column:span 4}}
-    @media (max-width:700px){.brand-card{grid-column:span 6}}
-    @media (max-width:540px){.brand-card{grid-column:span 12}}
-    .brand-card .name{font-weight:800; font-size:18px}
-    .brand-card .sub{color:var(--muted); font-size:12px}
-    .brand-card .emblem{position:absolute; right:-16px; bottom:-16px; opacity:.15; width:130px; height:130px; transform:rotate(-12deg)}
-    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); font-size:12px}
-
-    .model-card{grid-column: span 4; display:flex; flex-direction:column; gap:10px; padding:14px; position:relative; overflow:hidden}
-    @media (max-width:1100px){.model-card{grid-column:span 6}}
-    @media (max-width:700px){.model-card{grid-column:span 12}}
-    .model-title{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .model-title h3{margin:0; font-size:18px}
-    .specs{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
-    .spec{background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:10px; border-radius:12px}
-    .spec .k{display:block; font-size:11px; color:var(--muted)}
-    .spec .v{display:block; font-weight:800}
-    .thumb{height:160px; border-radius:12px; background: linear-gradient(135deg, rgba(var(--accent),.25), rgba(var(--accent2),.25)); display:grid; place-items:center; border:1px solid rgba(255,255,255,.08)}
-    .thumb svg{width:75%; height:75%}
-    .card-actions{display:flex; gap:8px; margin-top:4px}
-
-    .footer{padding:36px 24px 60px; color:var(--muted); text-align:center}
-
-    /* Modal / Drawer */
-    dialog{border:none; padding:0; border-radius:16px; width:min(880px, 96vw); background:var(--card); color:var(--text)}
-    .modal-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid rgba(255,255,255,.08)}
-    .modal-body{padding:18px}
-
-    /* Compare bar */
-    .compare-bar{position:sticky; bottom:12px; left:0; right:0; margin:0 auto; max-width:1200px; display:none}
-    .compare-bar .inner{background:var(--card); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:10px; box-shadow:var(--shadow); display:flex; gap:10px; align-items:center}
-    .pill-model{padding:8px 12px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:999px; display:flex; align-items:center; gap:8px}
-
-    /* Utility */
-    .hide{display:none !important}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .grow{flex:1}
-    .right{margin-left:auto}
-    .muted{color:var(--muted)}
-    .ring{box-shadow:0 0 0 2px rgba(var(--ring), .12) inset}
-    .heart{cursor:pointer; transition: transform .12s ease}
-    .heart:hover{transform:scale(1.06)}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W Carz</title>
+<style>
+body {font-family: Arial, sans-serif; margin:0; background:#f4f4f4; color:#333;}
+header {background:#222; color:white; padding:1em; text-align:center;}
+nav {display:flex; justify-content:center; gap:1em; margin:1em 0;}
+nav button {padding:0.5em 1em; cursor:pointer;}
+.container {width:95%; margin:auto; display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:1em;}
+.card {background:white; padding:1em; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.2);}
+.card img {width:100%; border-radius:10px;}
+.card h3 {margin:0.5em 0;}
+.modal {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center;}
+.modal-content {background:white; padding:2em; border-radius:10px; width:90%; max-width:600px; position:relative;}
+.close {position:absolute; top:10px; right:20px; cursor:pointer; font-size:1.5em;}
+.quiz {padding:2em; background:#fff; margin:1em auto; max-width:600px; border-radius:10px;}
+.quiz label {display:block; margin:1em 0 0.5em;}
+.quiz select {width:100%; padding:0.5em;}
+#suggestResult {margin-top:1em; font-weight:bold;}
+</style>
 </head>
 <body>
-  <header class="nav">
-    <div class="nav-inner">
-      <div class="brand" title="W Carz Home">
-        <span class="logo" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 44 L16 20 L26 44 L38 20 L48 44 L58 20" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        <span>W&nbsp;Carz</span>
-        <span class="tag" style="margin-left:6px">Top brands & models</span>
-      </div>
+<header>
+<h1>W Carz</h1>
+<p>Explore top car brands and models</p>
+</header>
+<nav>
+<button onclick="showAllCars()">All Cars</button>
+<button onclick="showQuiz()">Car Suggestion Quiz</button>
+<input type="text" id="searchInput" placeholder="Search by name or brand">
+<button onclick="searchCars()">Search</button>
+</nav>
+<div id="main" class="container"></div>
+<div id="quizDiv" class="quiz" style="display:none;">
+<h2>Find Your Car</h2>
+<label for="speed">Preferred Speed:</label>
+<select id="speed">
+<option value="high">High</option>
+<option value="medium">Medium</option>
+<option value="classic">Classic Fast</option>
+</select>
+<label for="brand">Brand Preference:</label>
+<select id="brand">
+<option value="any">Any</option>
+<option value="BMW">BMW</option>
+<option value="Bugatti">Bugatti</option>
+<option value="Ferrari">Ferrari</option>
+<option value="Lamborghini">Lamborghini</option>
+</select>
+<label for="power">Horsepower Preference:</label>
+<select id="power">
+<option value="high">High</option>
+<option value="medium">Medium</option>
+<option value="low">Low</option>
+</select>
+<button onclick="suggestCar()">Suggest Car</button>
+<div id="suggestResult"></div>
+</div>
+<div id="modal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()">&times;</span>
+<div id="modalBody"></div>
+</div>
+</div>
+<script>
+const cars = [
+  {brand:'BMW M', model:'M3 Modern', type:'modern', speed:'high', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M3+Modern'},
+  {brand:'BMW M', model:'M1 Classic', type:'classic', speed:'classic', hp:273, img:'https://via.placeholder.com/250x150?text=BMW+M1+Classic'},
+  {brand:'BMW M', model:'M4 Modern', type:'modern', speed:'high', hp:503, img:'https://via.placeholder.com/250x150?text=BMW+M4+Modern'},
+  {brand:'BMW M', model:'M2 Classic', type:'classic', speed:'classic', hp:270, img:'https://via.placeholder.com/250x150?text=BMW+M2+Classic'},
+  {brand:'Bugatti', model:'Chiron Modern', type:'modern', speed:'high', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Chiron'},
+  {brand:'Bugatti', model:'Veyron Classic', type:'classic', speed:'classic', hp:1001, img:'https://via.placeholder.com/250x150?text=Bugatti+Veyron'},
+  {brand:'Bugatti', model:'Divo Modern', type:'modern', speed:'high', hp:1500, img:'https://via.placeholder.com/250x150?text=Bugatti+Divo'},
+  {brand:'Bugatti', model:'EB110 Classic', type:'classic', speed:'classic', hp:553, img:'https://via.placeholder.com/250x150?text=Bugatti+EB110'},
+  {brand:'Ferrari', model:'F8 Modern', type:'modern', speed:'high', hp:710, img:'https://via.placeholder.com/250x150?text=Ferrari+F8'},
+  {brand:'Ferrari', model:'250 GTO Classic', type:'classic', speed:'classic', hp:300, img:'https://via.placeholder.com/250x150?text=Ferrari+250+GTO'},
+  {brand:'Ferrari', model:'SF90 Modern', type:'modern', speed:'high', hp:986, img:'https://via.placeholder.com/250x150?text=Ferrari+SF90'},
+  {brand:'Ferrari', model:'Testarossa Classic', type:'classic', speed:'classic', hp:390, img:'https://via.placeholder.com/250x150?text=Ferrari+Testarossa'},
+  {brand:'Lamborghini', model:'Huracan Modern', type:'modern', speed:'high', hp:631, img:'https://via.placeholder.com/250x150?text=Lamborghini+Huracan'},
+  {brand:'Lamborghini', model:'Countach Classic', type:'classic', speed:'classic', hp:455, img:'https://via.placeholder.com/250x150?text=Lamborghini+Countach'},
+  {brand:'Lamborghini', model:'Aventador Modern', type:'modern', speed:'high', hp:769, img:'https://via.placeholder.com/250x150?text=Lamborghini+Aventador'},
+  {brand:'Lamborghini', model:'Miura Classic', type:'classic', speed:'classic', hp:350, img:'https://via.placeholder.com/250x150?text=Lamborghini+Miura'}
+];
 
-      <div class="pill grow">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="q" type="search" placeholder="Search brand or model (e.g., Huracán, Taycan, Chiron)"/>
-      </div>
+function showAllCars(){
+  document.getElementById('main').style.display='grid';
+  document.getElementById('quizDiv').style.display='none';
+  displayCars(cars);
+}
 
-      <div class="actions">
-        <button id="toggle-theme" class="btn ghost" title="Toggle light/dark">Theme</button>
-        <button id="view-favorites" class="btn" title="Show favorites">❤ Favorites</button>
-        <button id="reset-filters" class="btn ghost" title="Clear filters">Reset</button>
-      </div>
-    </div>
-  </header>
+function displayCars(list){
+  const main = document.getElementById('main');
+  main.innerHTML='';
+  list.forEach(car=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<img src='${car.img}'><h3>${car.brand} ${car.model}</h3><p>Horsepower: ${car.hp} HP</p><button onclick='showDetails(${JSON.stringify(car)})'>Details</button>`;
+    main.appendChild(card);
+  });
+}
 
-  <main class="container">
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="hero-card glass" style="padding:18px">
-          <h1>Explore the world’s most iconic cars</h1>
-          <p>Hand‑picked brands and flagship models with performance numbers, price ranges, body types, and powertrains. Filter, favorite, and compare—everything in one sleek page.</p>
-          <div class="searchbar">
-            <div class="pill">
-              <label class="muted" for="type" style="font-size:12px">Type</label>
-              <select id="type">
-                <option value="">Any</option>
-                <option>EV</option>
-                <option>Hybrid</option>
-                <option>Gasoline</option>
-              </select>
-            </div>
-            <div class="pill">
-              <label class="muted" for="body" style="font-size:12px">Body</label>
-              <select id="body">
-                <option value="">Any</option>
-                <option>Coupe</option>
-                <option>Roadster</option>
-                <option>Hypercar</option>
-                <option>Sedan</option>
-                <option>SUV</option>
-                <option>Hatch</option>
-              </select>
-            </div>
-            <div class="pill">
-              <label class="muted" for="price" style="font-size:12px">Max Price ($)</label>
-              <input id="price" type="range" min="80000" max="3500000" step="10000" value="3500000"/>
-              <span id="priceLabel" class="muted">Any</span>
-            </div>
-            <button id="apply" class="btn primary">Apply Filters</button>
-          </div>
-        </div>
-        <div class="hero-card glass" style="padding:0; display:grid; place-items:center">
-          <!-- Decorative SVG car silhouette -->
-          <svg viewBox="0 0 800 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <defs>
-              <linearGradient id="g" x1="0" x2="1">
-                <stop offset="0" stop-color="rgba(64,160,255,.8)"/>
-                <stop offset="1" stop-color="rgba(239,68,68,.8)"/>
-              </linearGradient>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="6" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <rect width="100%" height="100%" fill="none"/>
-            <path d="M80 210c60-80 160-120 260-120h40c120 0 200 60 220 80l60 10c16 2 28 14 28 30v8c0 8-6 14-14 14h-40c-8-24-30-40-56-40s-48 16-56 40H280c-8-24-30-40-56-40s-48 16-56 40H84c-8 0-14-6-14-14v-6c0-16 4-34 10-42z" fill="url(#g)" opacity=".28" filter="url(#glow)"/>
-            <circle cx="220" cy="262" r="34" fill="none" stroke="url(#g)" stroke-width="8" opacity=".9"/>
-            <circle cx="560" cy="262" r="34" fill="none" stroke="url(#g)" stroke-width="8" opacity=".9"/>
-          </svg>
-        </div>
-      </div>
-    </section>
+function showDetails(car){
+  document.getElementById('modalBody').innerHTML=`<h2>${car.brand} ${car.model}</h2><img src='${car.img}' style='width:100%'><p>Type: ${car.type}</p><p>Speed Category: ${car.speed}</p><p>Horsepower: ${car.hp} HP</p>`;
+  document.getElementById('modal').style.display='flex';
+}
 
-    <section class="section" id="brands">
-      <h2>Featured Brands</h2>
-      <div class="grid" id="brandGrid"></div>
-    </section>
+function closeModal(){
+  document.getElementById('modal').style.display='none';
+}
 
-    <section class="section" id="models">
-      <div class="row" style="justify-content:space-between">
-        <h2>Top Models</h2>
-        <div class="row muted" style="font-size:12px">Click a card for full specs • Use ❤ to favorite • Select to compare</div>
-      </div>
-      <div class="grid" id="modelGrid"></div>
-    </section>
+function searchCars(){
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const results = cars.filter(car => car.brand.toLowerCase().includes(query) || car.model.toLowerCase().includes(query));
+  displayCars(results);
+}
 
-    <div class="compare-bar" id="compareBar">
-      <div class="inner">
-        <strong style="margin-right:6px">Compare</strong>
-        <div class="row" id="comparePills"></div>
-        <button class="btn primary right" id="openCompare">Open table</button>
-        <button class="btn ghost" id="clearCompare">Clear</button>
-      </div>
-    </div>
+function showQuiz(){
+  document.getElementById('main').style.display='none';
+  document.getElementById('quizDiv').style.display='block';
+}
 
-    <section class="footer">
-      <div>© <span id="year"></span> W Carz — Built with pure HTML, CSS, and JS. Data is curated for demo purposes.</div>
-    </section>
-  </main>
-
-  <!-- Model Details Modal -->
-  <dialog id="details">
-    <div class="modal-head">
-      <div class="row"><strong id="detailsTitle">Model</strong><span class="chip" id="detailsBrand">Brand</span></div>
-      <button class="btn ghost" onclick="document.getElementById('details').close()">Close</button>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="thumb" style="flex:1; min-width:240px">
-          <!-- Reuse SVG car silhouette -->
-          <svg viewBox="0 0 800 320" width="100%" height="100%" aria-hidden="true">
-            <use href="#"/>
-            <defs>
-              <linearGradient id="g2" x1="0" x2="1">
-                <stop offset="0" stop-color="rgba(64,160,255,.8)"/>
-                <stop offset="1" stop-color="rgba(239,68,68,.8)"/>
-              </linearGradient>
-            </defs>
-            <path d="M80 210c60-80 160-120 260-120h40c120 0 200 60 220 80l60 10c16 2 28 14 28 30v8c0 8-6 14-14 14h-40c-8-24-30-40-56-40s-48 16-56 40H280c-8-24-30-40-56-40s-48 16-56 40H84c-8 0-14-6-14-14v-6c0-16 4-34 10-42z" fill="url(#g2)" opacity=".45"/>
-          </svg>
-        </div>
-        <div style="flex:1; min-width:260px">
-          <div class="grid" style="grid-template-columns:repeat(2,1fr)">
-            <div class="spec"><span class="k">Power</span> <span class="v" id="d-power">—</span></div>
-            <div class="spec"><span class="k">0–100 km/h</span> <span class="v" id="d-sprint">—</span></div>
-            <div class="spec"><span class="k">Top Speed</span> <span class="v" id="d-top">—</span></div>
-            <div class="spec"><span class="k">Price</span> <span class="v" id="d-price">—</span></div>
-            <div class="spec"><span class="k">Body</span> <span class="v" id="d-body">—</span></div>
-            <div class="spec"><span class="k">Powertrain</span> <span class="v" id="d-type">—</span></div>
-          </div>
-          <div style="margin-top:10px" class="muted" id="d-desc">Description…</div>
-          <div class="row" style="margin-top:12px">
-            <button id="d-fav" class="btn">❤ Add to favorites</button>
-            <button id="d-compare" class="btn ghost">Compare this</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- Compare Modal -->
-  <dialog id="compare">
-    <div class="modal-head">
-      <strong>Compare Models</strong>
-      <button class="btn ghost" onclick="document.getElementById('compare').close()">Close</button>
-    </div>
-    <div class="modal-body" id="compareBody"></div>
-  </dialog>
-
-  <script>
-  // ---------- Data ----------
-  const BRANDS = [
-    { id:'ferrari', name:'Ferrari', founded:1947, origin:'Italy', vibe:'Racing soul', color:'rgba(239,68,68,.2)' },
-    { id:'lamborghini', name:'Lamborghini', founded:1963, origin:'Italy', vibe:'Raging bull', color:'rgba(234,179,8,.2)' },
-    { id:'porsche', name:'Porsche', founded:1931, origin:'Germany', vibe:'Precision engineering', color:'rgba(64,160,255,.18)' },
-    { id:'mclaren', name:'McLaren', founded:1985, origin:'UK', vibe:'Lightweight wizardry', color:'rgba(249,115,22,.2)' },
-    { id:'bugatti', name:'Bugatti', founded:1909, origin:'France', vibe:'Ultimate speed', color:'rgba(147,51,234,.2)' },
-    { id:'tesla', name:'Tesla', founded:2003, origin:'USA', vibe:'Electric performance', color:'rgba(34,197,94,.2)' },
-    { id:'rimac', name:'Rimac', founded:2009, origin:'Croatia', vibe:'EV hypercar', color:'rgba(34,197,94,.18)' },
-    { id:'amg', name:'Mercedes‑AMG', founded:1967, origin:'Germany', vibe:'Luxury power', color:'rgba(59,130,246,.18)' },
-    { id:'bmw', name:'BMW M', founded:1972, origin:'Germany', vibe:'M power', color:'rgba(14,165,233,.18)' },
-    { id:'audi', name:'Audi RS', founded:1909, origin:'Germany', vibe:'Quattro grip', color:'rgba(99,102,241,.18)' }
-  ];
-
-  const MODELS = [
-    { id:'sf90', brand:'ferrari', name:'SF90 Stradale', type:'Hybrid', body:'Coupe', power:'986 hp', zero:'2.5 s', top:'340 km/h', price: $convert(524000), desc:'Ferrari\'s first series‑production plug‑in hybrid supercar with blistering lap pace.' },
-    { id:'296gtb', brand:'ferrari', name:'296 GTB', type:'Hybrid', body:'Coupe', power:'819 hp', zero:'2.9 s', top:'330 km/h', price: $convert(321000), desc:'V6 hybrid that blends razor handling with everyday usability.' },
-
-    { id:'huracan-tecnica', brand:'lamborghini', name:'Huracán Tecnica', type:'Gasoline', body:'Coupe', power:'631 hp', zero:'3.2 s', top:'325 km/h', price: $convert(244000), desc:'Naturally aspirated V10 theater tuned for road and track.' },
-    { id:'revuelto', brand:'lamborghini', name:'Revuelto', type:'Hybrid', body:'Coupe', power:'1001 hp', zero:'2.5 s', top:'350 km/h', price: $convert(608000), desc:'New V12 hybrid flagship with tri‑motor torque fill and wild aero.' },
-
-    { id:'911-gt3rs', brand:'porsche', name:'911 GT3 RS', type:'Gasoline', body:'Coupe', power:'518 hp', zero:'3.0 s', top:'296 km/h', price: $convert(225000), desc:'Track‑devouring aero monster with NA soundtrack and precision steering.' },
-    { id:'taycan-turbo-s', brand:'porsche', name:'Taycan Turbo S', type:'EV', body:'Sedan', power:'750 hp (overboost)', zero:'2.6 s', top:'260 km/h', price: $convert(216000), desc:'Four‑door EV missile with repeatable performance and luxury cabin.' },
-
-    { id:'765lt', brand:'mclaren', name:'765LT', type:'Gasoline', body:'Coupe', power:'755 hp', zero:'2.8 s', top:'330 km/h', price: $convert(385000), desc:'Longtail special: lighter, lower, louder—track focus turned up.' },
-    { id:'artura', brand:'mclaren', name:'Artura', type:'Hybrid', body:'Coupe', power:'671 hp', zero:'3.0 s', top:'330 km/h', price: $convert(233000), desc:'New hybrid V6 platform with instant electric shove and daily manners.' },
-
-    { id:'chiron', brand:'bugatti', name:'Chiron Super Sport', type:'Gasoline', body:'Hypercar', power:'1577 hp', zero:'2.4 s', top:'440 km/h*', price: $convert(3900000), desc:'Quad‑turbo W16 royalty chasing top‑speed crowns (*derestricted).'},
-
-    { id:'model-s-plaid', brand:'tesla', name:'Model S Plaid', type:'EV', body:'Sedan', power:'1020 hp', zero:'1.99 s', top:'322 km/h', price: $convert(109990), desc:'Tri‑motor torque, minimalist tech cabin, outrageous straight‑line pace.' },
-
-    { id:'nevera', brand:'rimac', name:'Nevera', type:'EV', body:'Hypercar', power:'1914 hp', zero:'1.85 s', top:'412 km/h', price: $convert(2400000), desc:'Four motors, torque vectoring sorcery, and record‑shattering sprints.' },
-
-    { id:'amg-gt-black', brand:'amg', name:'AMG GT Black Series', type:'Gasoline', body:'Coupe', power:'720 hp', zero:'3.1 s', top:'325 km/h', price: $convert(325000), desc:'Ring‑record aero and bi‑turbo fury wrapped in Benz luxury.' },
-
-    { id:'m5-cs', brand:'bmw', name:'M5 CS', type:'Gasoline', body:'Sedan', power:'627 hp', zero:'2.9 s', top:'305 km/h', price: $convert(142000), desc:'Sleeper sedan with carbon diet and driving‑mode depth.' },
-
-    { id:'rs6-performance', brand:'audi', name:'RS 6 Performance', type:'Gasoline', body:'Wagon', power:'630 hp', zero:'3.4 s', top:'305 km/h', price: $convert(125000), desc:'Mighty quattro family rocket with supercar pace and wagon utility.' }
-  ];
-
-  // Helper to pretty format $ values
-  function $convert(n){ return n; } // values stored numerically, formatted later
-  function money(n){
-    try{ return '$' + n.toLocaleString('en-US'); } catch{ return '$' + n; }
+function suggestCar(){
+  const speed = document.getElementById('speed').value;
+  const brand = document.getElementById('brand').value;
+  const power = document.getElementById('power').value;
+  let result = cars.filter(car=>car.speed===speed);
+  if(brand!=='any') result = result.filter(car=>car.brand===brand);
+  if(power==='high') result = result.filter(car=>car.hp>=600);
+  if(power==='medium') result = result.filter(car=>car.hp<600 && car.hp>=400);
+  if(power==='low') result = result.filter(car=>car.hp<400);
+  if(result.length>0){
+    const car = result[0];
+    document.getElementById('suggestResult').innerHTML=`We suggest: ${car.brand} ${car.model} (${car.hp} HP)`;
+  } else {
+    document.getElementById('suggestResult').innerHTML='No matching car found.';
   }
+}
 
-  // ---------- State ----------
-  const state = {
-    q:'', type:'', body:'', price: 3500000,
-    favorites: new Set(JSON.parse(localStorage.getItem('wcarz:fav')||'[]')),
-    compare: new Set(),
-    theme: localStorage.getItem('wcarz:theme')||'dark'
-  };
-  if(state.theme==='light') document.documentElement.setAttribute('data-theme','light');
-
-  // ---------- DOM ----------
-  const el = id => document.getElementById(id);
-  const brandGrid = el('brandGrid');
-  const modelGrid = el('modelGrid');
-  const price = el('price');
-  const priceLabel = el('priceLabel');
-
-  // Populate year footer
-  el('year').textContent = new Date().getFullYear();
-
-  // ---------- Renderers ----------
-  function renderBrands(){
-    brandGrid.innerHTML = '';
-    BRANDS.forEach(b=>{
-      const card = document.createElement('div');
-      card.className = 'brand-card glass ring';
-      card.style.background = `linear-gradient(180deg, ${b.color}, transparent)`;
-      card.innerHTML = `
-        <div class="row" style="justify-content:space-between">
-          <div>
-            <div class="name">${b.name}</div>
-            <div class="sub">${b.origin} • est. ${b.founded}</div>
-          </div>
-          <span class="chip">${b.vibe}</span>
-        </div>
-        <svg class="emblem" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M6 44 L16 20 L26 44 L38 20 L48 44 L58 20" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      `;
-      card.onclick = ()=>{ el('q').value = b.name; state.q = b.name.toLowerCase(); filterAndRender(); window.scrollTo({top: modelGrid.offsetTop-80, behavior:'smooth'}); };
-      brandGrid.appendChild(card);
-    })
-  }
-
-  function modelCardHTML(m){
-    const fav = state.favorites.has(m.id);
-    return `
-      <div class="model-title">
-        <h3>${m.name}</h3>
-        <div class="row">
-          <button class="btn ghost heart" data-fav="${m.id}" title="Favorite">${fav?'❤':'♡'}</button>
-          <label class="pill"><input type="checkbox" data-compare="${m.id}"> Compare</label>
-        </div>
-      </div>
-      <div class="thumb">${carSVG()}</div>
-      <div class="specs">
-        <div class="spec"><span class="k">Power</span><span class="v">${m.power}</span></div>
-        <div class="spec"><span class="k">0–100</span><span class="v">${m.zero}</span></div>
-        <div class="spec"><span class="k">Top</span><span class="v">${m.top}</span></div>
-      </div>
-      <div class="row card-actions">
-        <span class="chip">${m.body}</span>
-        <span class="chip">${m.type}</span>
-        <span class="chip right">${money(m.price)}</span>
-      </div>
-    `;
-  }
-
-  function renderModels(list){
-    modelGrid.innerHTML = '';
-    list.forEach(m=>{
-      const card = document.createElement('div');
-      card.className = 'model-card glass ring';
-      card.innerHTML = modelCardHTML(m);
-      card.addEventListener('click', (e)=>{
-        if(e.target && (e.target.matches('[data-fav]') || e.target.matches('[data-compare]') || e.target.closest('label'))){
-          // handled separately
-        } else {
-          openDetails(m);
-        }
-      });
-      modelGrid.appendChild(card);
-    });
-    bindModelControls();
-  }
-
-  function bindModelControls(){
-    // favorites
-    modelGrid.querySelectorAll('[data-fav]').forEach(btn=>{
-      btn.onclick = (e)=>{ e.stopPropagation(); const id = btn.getAttribute('data-fav');
-        toggleFavorite(id); btn.textContent = state.favorites.has(id)?'❤':'♡'; };
-    });
-    // compare
-    modelGrid.querySelectorAll('[data-compare]').forEach(chk=>{
-      chk.onchange = (e)=>{ e.stopPropagation(); const id = chk.getAttribute('data-compare');
-        if(chk.checked){ addCompare(id); } else { removeCompare(id); }
-      };
-    });
-  }
-
-  function openDetails(m){
-    el('detailsTitle').textContent = m.name;
-    el('detailsBrand').textContent = BRANDS.find(b=>b.id===m.brand)?.name || m.brand;
-    el('d-power').textContent = m.power;
-    el('d-sprint').textContent = m.zero;
-    el('d-top').textContent = m.top;
-    el('d-price').textContent = money(m.price);
-    el('d-body').textContent = m.body;
-    el('d-type').textContent = m.type;
-    el('d-desc').textContent = m.desc;
-
-    const favBtn = el('d-fav');
-    favBtn.textContent = state.favorites.has(m.id)?'❤ Remove favorite':'❤ Add to favorites';
-    favBtn.onclick = ()=>{ toggleFavorite(m.id); favBtn.textContent = state.favorites.has(m.id)?'❤ Remove favorite':'❤ Add to favorites'; filterAndRender(); };
-
-    const cmpBtn = el('d-compare');
-    cmpBtn.textContent = state.compare.has(m.id)?'Remove from compare':'Compare this';
-    cmpBtn.onclick = ()=>{ if(state.compare.has(m.id)){ removeCompare(m.id) } else { addCompare(m.id) } };
-
-    el('details').showModal();
-  }
-
-  function carSVG(){
-    return `<svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="gg" x1="0" x2="1">
-          <stop offset="0" stop-color="rgba(64,160,255,.9)"/>
-          <stop offset="1" stop-color="rgba(239,68,68,.9)"/>
-        </linearGradient>
-      </defs>
-      <path d="M16 52c10-14 30-22 52-22h8c24 0 40 10 44 14l12 2c3 .4 5 3 5 6v2c0 2-2 4-4 4h-8c-2-5-6-8-11-8s-9 3-11 8H54c-2-5-6-8-11-8s-9 3-11 8H17c-2 0-3-2-3-4v-2c0-4 1-7 2-8z" fill="url(#gg)" opacity=".35"/>
-      <circle cx="48" cy="60" r="8" fill="none" stroke="url(#gg)" stroke-width="3"/>
-      <circle cx="112" cy="60" r="8" fill="none" stroke="url(#gg)" stroke-width="3"/>
-    </svg>`;
-  }
-
-  // ---------- Filtering ----------
-  function filterAndRender(){
-    const q = state.q.trim().toLowerCase();
-    const filtered = MODELS.filter(m=>{
-      const hitsQ = !q || m.name.toLowerCase().includes(q) || m.brand.includes(q);
-      const hitsType = !state.type || m.type===state.type;
-      const hitsBody = !state.body || m.body===state.body;
-      const hitsPrice = m.price <= state.price;
-      return hitsQ && hitsType && hitsBody && hitsPrice;
-    });
-    renderModels(filtered);
-  }
-
-  // ---------- Favorites ----------
-  function saveFavs(){ localStorage.setItem('wcarz:fav', JSON.stringify([...state.favorites])); }
-  function toggleFavorite(id){ if(state.favorites.has(id)) state.favorites.delete(id); else state.favorites.add(id); saveFavs(); }
-
-  // ---------- Compare ----------
-  function addCompare(id){ if(state.compare.size>=3 && !state.compare.has(id)) return alert('Compare up to 3 models.'); state.compare.add(id); refreshCompareUI(); }
-  function removeCompare(id){ state.compare.delete(id); refreshCompareUI(); }
-  function refreshCompareUI(){
-    const bar = el('compareBar');
-    const pills = el('comparePills');
-    pills.innerHTML = '';
-    [...state.compare].forEach(id=>{
-      const m = MODELS.find(x=>x.id===id); if(!m) return;
-      const p = document.createElement('span');
-      p.className = 'pill-model'; p.textContent = m.name;
-      const x = document.createElement('button'); x.className='btn ghost'; x.textContent='×'; x.onclick=()=>removeCompare(id);
-      p.appendChild(x); pills.appendChild(p);
-    });
-    bar.style.display = state.compare.size? 'block':'none';
-  }
-
-  function openCompareTable(){
-    const models = [...state.compare].map(id=>MODELS.find(m=>m.id===id)).filter(Boolean);
-    if(!models.length){ alert('Pick models to compare first.'); return; }
-    const rows = [
-      ['Model', ...models.map(m=>m.name)],
-      ['Brand', ...models.map(m=>BRANDS.find(b=>b.id===m.brand)?.name || m.brand)],
-      ['Body', ...models.map(m=>m.body)],
-      ['Powertrain', ...models.map(m=>m.type)],
-      ['Power', ...models.map(m=>m.power)],
-      ['0–100 km/h', ...models.map(m=>m.zero)],
-      ['Top speed', ...models.map(m=>m.top)],
-      ['Price', ...models.map(m=>money(m.price))],
-      ['Description', ...models.map(m=>m.desc)]
-    ];
-    const table = document.createElement('table');
-    table.style.width='100%'; table.style.borderCollapse='separate'; table.style.borderSpacing='0';
-    table.innerHTML = rows.map((r,i)=>{
-      return `<tr>${r.map((c,ci)=>`<td style="padding:10px; border-bottom:1px solid rgba(255,255,255,.08); ${ci===0? 'font-weight:700; color:var(--muted)':''}">${c}</td>`).join('')}</tr>`;
-    }).join('');
-    const body = el('compareBody');
-    body.innerHTML = '';
-    body.appendChild(table);
-    el('compare').showModal();
-  }
-
-  // ---------- Events ----------
-  el('q').addEventListener('input', e=>{ state.q = e.target.value.toLowerCase(); filterAndRender(); });
-  el('type').addEventListener('change', e=>{ state.type = e.target.value; });
-  el('body').addEventListener('change', e=>{ state.body = e.target.value; });
-  price.addEventListener('input', e=>{ state.price = +e.target.value; priceLabel.textContent = state.price>=3500000? 'Any' : money(state.price); });
-  el('apply').onclick = ()=> filterAndRender();
-  el('reset-filters').onclick = ()=>{ state.q=''; state.type=''; state.body=''; state.price=3500000; el('q').value=''; el('type').value=''; el('body').value=''; price.value=3500000; priceLabel.textContent='Any'; filterAndRender(); };
-
-  el('toggle-theme').onclick = ()=>{
-    const isLight = document.documentElement.getAttribute('data-theme')==='light';
-    if(isLight){ document.documentElement.removeAttribute('data-theme'); state.theme='dark'; }
-    else { document.documentElement.setAttribute('data-theme','light'); state.theme='light'; }
-    localStorage.setItem('wcarz:theme', state.theme);
-  };
-
-  el('view-favorites').onclick = ()=>{
-    const favs = [...state.favorites];
-    if(!favs.length){ alert('No favorites yet. Tap ❤ on any model!'); return; }
-    // Show only favs in the grid
-    const list = MODELS.filter(m=>favs.includes(m.id));
-    renderModels(list);
-  };
-
-  el('openCompare').onclick = openCompareTable;
-  el('clearCompare').onclick = ()=>{ state.compare.clear(); refreshCompareUI(); filterAndRender(); };
-
-  // ---------- Init ----------
-  renderBrands();
-  filterAndRender();
-  refreshCompareUI();
-  priceLabel.textContent='Any';
-  </script>
+// Load all cars on page load
+showAllCars();
+</script>
 </body>
 </html>
